@@ -5,8 +5,7 @@ import org.apache.spark.sql.{SaveMode, SparkSession}
 
 object DataFrameApp {
   def main(args: Array[String]): Unit = {
-     //val strpath = "/data/bgdata_small/";
-    val strpath = "C:\\Users\\Chardon\\Documents\\AADoc\\ITMO\\BigData\\DM\\bgdata_small\\"
+     val strpath = "/data/bgdata_small/";
 
 
     val userWallComments = strpath + "userWallComments.parquet";
