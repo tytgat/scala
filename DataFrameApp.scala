@@ -1,3 +1,4 @@
+import org.apache.spark.rdd.RDD
 import org.apache.spark.sql
 import org.apache.spark.sql.functions.{avg, count, max, sum}
 import org.apache.spark.sql.{SaveMode, SparkSession}
@@ -5,7 +6,8 @@ import org.apache.spark.sql.{SaveMode, SparkSession}
 
 object DataFrameApp {
   def main(args: Array[String]): Unit = {
-     val strpath = "/data/bgdata_small/";
+    val strpath = "C:\\Users\\Chardon\\Documents\\AADoc\\ITMO\\BigData\\DM\\bgdata_small\\";
+    //val strpath = "/data/bgdata_small/";
 
 
     val userWallComments = strpath + "userWallComments.parquet";
@@ -36,58 +38,72 @@ object DataFrameApp {
 
     spark.sparkContext.setLogLevel("ERROR")
 
-    val q1SQLTimeS = System.nanoTime();  val q1SQL = question1SQL(spark, userWallComments, userWallLikes, userWallPosts); q1SQL.show();      val q1SQLTimeE = System.nanoTime(); val q1SQLExeTime = ((q1SQLTimeE-q1SQLTimeS) / 1e9d)+"sec"
-    val q2SQLTimeS = System.nanoTime();  val q2SQL = question2SQL(spark, friends, followers, userGroupsSubs, userWallPhotos); q2SQL.show();  val q2SQLTimeE = System.nanoTime(); val q2SQLExeTime = ((q2SQLTimeE-q2SQLTimeS) / 1e9d)+"sec"
-    val q3SQLTimeS = System.nanoTime();  val q3SQL = question3SQL(spark, userWallComments); q3SQL.show();                                    val q3SQLTimeE = System.nanoTime(); val q3SQLExeTime = ((q3SQLTimeE-q3SQLTimeS) / 1e9d)+"sec"
-    val q4SQLTimeS = System.nanoTime();  val q4SQL = question4SQL(spark, userWallLikes); q4SQL.show();                                       val q4SQLTimeE = System.nanoTime(); val q4SQLExeTime = ((q4SQLTimeE-q4SQLTimeS) / 1e9d)+"sec"
-    val q5SQLTimeS = System.nanoTime();  val q5SQL = question5SQL(spark, groupsProfiles, userGroupsSubs); q5SQL.show();                      val q5SQLTimeE = System.nanoTime(); val q5SQLExeTime = ((q5SQLTimeE-q5SQLTimeS) / 1e9d)+"sec"
-    val q6SQLTimeS = System.nanoTime();  val q6SQL = question6SQL(spark, userWallProfiles, friends, followers); q6SQL.show();                val q6SQLTimeE = System.nanoTime(); val q6SQLExeTime = ((q6SQLTimeE-q6SQLTimeS) / 1e9d)+"sec"
-    val q7SQLTimeS = System.nanoTime();  val q7SQL = question7SQL(spark, userWallComments, userWallLikes, followers, friends); q7SQL.show(); val q7SQLTimeE = System.nanoTime(); val q7SQLExeTime = ((q7SQLTimeE-q7SQLTimeS) / 1e9d)+"sec"
+/*
+    // Question 1
+    val q1SQLTimeS = System.nanoTime();  val q1SQL = question1SQL(spark, userWallComments, userWallLikes, userWallPosts); writeParquetToComputer(q1SQL,strpath + "Questions\\Q1SQL");      val q1SQLTimeE = System.nanoTime();  val q1SQLExeTime = (q1SQLTimeE-q1SQLTimeS) / 1e9d
+    val q1DFTimeS = System.nanoTime();   val q1DF = question1DF(spark, userWallComments, userWallLikes, userWallPosts); writeParquetToComputer(q1DF,strpath + "Questions\\Q1DF");          val q1DFTimeE = System.nanoTime();   val q1DFExeTime = (q1DFTimeE-q1DFTimeS) / 1e9d
+    val q1APITimeS = System.nanoTime();  val q1API = question1API(spark, userWallComments, userWallLikes, userWallPosts); q1API.foreach(println) ;                                         val q1APITimeE = System.nanoTime();  val q1APIExeTime = (q1APITimeE-q1APITimeS) / 1e9d
+    printTimetable(1,q1SQLExeTime,q1DFExeTime,q1APIExeTime)
+*/
 
+    // Question 2
+    //val q2SQLTimeS = System.nanoTime();  val q2SQL = question2SQL(spark, friends, followers, userGroupsSubs, userWallPhotos); writeParquetToComputer(q2SQL,strpath + "Questions\\Q2SQL");  val q2SQLTimeE = System.nanoTime(); val q2SQLExeTime = (q2SQLTimeE-q2SQLTimeS) / 1e9d
+    //val q2DFTimeS = System.nanoTime();  val q2DF = question2DF(spark, friends, followers, userGroupsSubs, userWallPhotos); writeParquetToComputer(q2DF,strpath + "Questions\\Q2DF");      val q2DFTimeE = System.nanoTime();  val q2DFExeTime = (q2DFTimeE-q2DFTimeS) / 1e9d
+    //printTimetable(2,q2SQLExeTime,q2DFExeTime,123456789)
 
-
-    val q1DFTimeS = System.nanoTime();  val q1DF = question1DF(spark, userWallComments, userWallLikes, userWallPosts); q1DF.show();      val q1DFTimeE = System.nanoTime(); val q1DFExeTime = ((q1DFTimeE-q1DFTimeS) / 1e9d)+"sec"
-    val q2DFTimeS = System.nanoTime();  val q2DF = question2DF(spark, friends, followers, userGroupsSubs, userWallPhotos); q2DF.show();  val q2DFTimeE = System.nanoTime(); val q2DFExeTime = ((q2DFTimeE-q2DFTimeS) / 1e9d)+"sec"
-    val q3DFTimeS = System.nanoTime();  val q3DF = question3DF(spark, userWallComments); q3DF.show();                                    val q3DFTimeE = System.nanoTime(); val q3DFExeTime = ((q3DFTimeE-q3DFTimeS) / 1e9d)+"sec"
-    val q4DFTimeS = System.nanoTime();  val q4DF = question4DF(spark, userWallLikes); q4DF.show();                                       val q4DFTimeE = System.nanoTime(); val q4DFExeTime = ((q4DFTimeE-q4DFTimeS) / 1e9d)+"sec"
-    val q5DFTimeS = System.nanoTime();  val q5DF = question5DF(spark, groupsProfiles, userGroupsSubs); q5DF.show();                      val q5DFTimeE = System.nanoTime(); val q5DFExeTime = ((q5DFTimeE-q5DFTimeS) / 1e9d)+"sec"
-    val q6DFTimeS = System.nanoTime();  val q6DF = question6DF(spark, userWallProfiles, friends, followers); q6DF.show();                val q6DFTimeE = System.nanoTime(); val q6DFExeTime = ((q6DFTimeE-q6DFTimeS) / 1e9d)+"sec"
-    val q7DFTimeS = System.nanoTime();  val q7DF = question7DF(spark, userWallComments, userWallLikes, followers, friends); q7DF.show(); val q7DFTimeE = System.nanoTime(); val q7DFExeTime = ((q7DFTimeE-q7DFTimeS) / 1e9d)+"sec"
-
-    val q9DF = question9DF(q1DF,q2DF,q3DF,q4DF,q5DF,q6DF,q7DF);
-    q9DF.show()
-
-    println("|task\t| spark native api time \t| spark dataframe api \t| spark sql api \t| best \t|")
-    println("|1\t| " + "|\t" + q1DFExeTime + "\t| " + q1SQLExeTime + "\t|" + bestTime(q1SQLTimeE-q1SQLTimeS,q1DFTimeE-q1DFTimeS,123456789) + "\t|" );
-    println("|1\t| " + "|\t" + q2DFExeTime + "\t| " + q2SQLExeTime + "\t|" + bestTime(q2SQLTimeE-q2SQLTimeS,q2DFTimeE-q2DFTimeS,123456789) + "\t|" );
-    println("|1\t| " + "|\t" + q3DFExeTime + "\t| " + q3SQLExeTime + "\t|" + bestTime(q3SQLTimeE-q3SQLTimeS,q3DFTimeE-q3DFTimeS,123456789) + "\t|" );
-    println("|1\t| " + "|\t" + q4DFExeTime + "\t| " + q4SQLExeTime + "\t|" + bestTime(q4SQLTimeE-q4SQLTimeS,q4DFTimeE-q4DFTimeS,123456789) + "\t|" );
-    println("|1\t| " + "|\t" + q5DFExeTime + "\t| " + q5SQLExeTime + "\t|" + bestTime(q5SQLTimeE-q5SQLTimeS,q5DFTimeE-q5DFTimeS,123456789) + "\t|" );
-    println("|1\t| " + "|\t" + q6DFExeTime + "\t| " + q6SQLExeTime + "\t|" + bestTime(q6SQLTimeE-q6SQLTimeS,q6DFTimeE-q6DFTimeS,123456789) + "\t|" );
-    println("|1\t| " + "|\t" + q7DFExeTime + "\t| " + q7SQLExeTime + "\t|" + bestTime(q7SQLTimeE-q7SQLTimeS,q7DFTimeE-q7DFTimeS,123456789) + "\t|" );
-
-    //18/12/16 17:11:24 ERROR BroadcastExchangeExec: Could not execute broadcast in 300 secs.
+/*
+    // Question 3
+    val q3SQLTimeS = System.nanoTime();  val q3SQL = question3SQL(spark, userWallComments); writeParquetToComputer(q3SQL,strpath + "Questions\\Q3SQL");                                    val q3SQLTimeE = System.nanoTime(); val q3SQLExeTime = (q3SQLTimeE-q3SQLTimeS) / 1e9d
+    val q3DFTimeS = System.nanoTime();  val q3DF = question3DF(spark, userWallComments); writeParquetToComputer(q3DF,strpath + "Questions\\Q3DF");                                        val q3DFTimeE = System.nanoTime();  val q3DFExeTime = (q3DFTimeE-q3DFTimeS) / 1e9d
+    printTimetable(3,q3SQLExeTime,q3DFExeTime,123456789)
+*/
+/*
+    //Question 4
+    val q4SQLTimeS = System.nanoTime();  val q4SQL = question4SQL(spark, userWallLikes); writeParquetToComputer(q4SQL,strpath + "Questions\\Q4SQL");                                       val q4SQLTimeE = System.nanoTime(); val q4SQLExeTime = (q4SQLTimeE-q4SQLTimeS) / 1e9d
+    val q4DFTimeS = System.nanoTime();  val q4DF = question4DF(spark, userWallLikes); writeParquetToComputer(q4DF,strpath + "Questions\\Q4DF");                                           val q4DFTimeE = System.nanoTime();  val q4DFExeTime = (q4DFTimeE-q4DFTimeS) / 1e9d
+    printTimetable(4,q4SQLExeTime,q4DFExeTime,123456789)
+*/
+/*
+    //Question 5
+    val q5SQLTimeS = System.nanoTime();  val q5SQL = question5SQL(spark, groupsProfiles, userGroupsSubs); writeParquetToComputer(q5SQL,strpath + "Questions\\Q5SQL");                      val q5SQLTimeE = System.nanoTime(); val q5SQLExeTime = (q5SQLTimeE-q5SQLTimeS) / 1e9d
+    val q5DFTimeS = System.nanoTime();  val q5DF = question5DF(spark, groupsProfiles, userGroupsSubs); writeParquetToComputer(q5DF,strpath + "Questions\\Q5DF");                          val q5DFTimeE = System.nanoTime();  val q5DFExeTime = (q5DFTimeE-q5DFTimeS) / 1e9d
+    printTimetable(5,q5SQLExeTime,q5DFExeTime,123456789)
+*/
+/*
+    //Question 6
+    val q6SQLTimeS = System.nanoTime();  val q6SQL = question6SQL(spark, userWallProfiles, friends, followers); writeParquetToComputer(q6SQL,strpath + "Questions\\Q6SQL");                val q6SQLTimeE = System.nanoTime(); val q6SQLExeTime = (q6SQLTimeE-q6SQLTimeS) / 1e9d
+    val q6DFTimeS = System.nanoTime();  val q6DF = question6DF(spark, userWallProfiles, friends, followers); writeParquetToComputer(q6DF,strpath + "Questions\\Q6DF");                    val q6DFTimeE = System.nanoTime();  val q6DFExeTime = (q6DFTimeE-q6DFTimeS) / 1e9d
+    printTimetable(6,q6SQLExeTime,q6DFExeTime,123456789)
+*/
+/*
     //Crash on question 7
-
-
-
+    //18/12/16 17:11:24 ERROR BroadcastExchangeExec: Could not execute broadcast in 300 secs.
+    //Question 7
+    val q7SQLTimeS = System.nanoTime();  val q7SQL = question7SQL(spark, userWallComments, userWallLikes, followers, friends); writeParquetToComputer(q7SQL,strpath + "Questions\\Q7SQL"); val q7SQLTimeE = System.nanoTime(); val q7SQLExeTime = (q7SQLTimeE-q7SQLTimeS) / 1e9d
+    val q7DFTimeS = System.nanoTime();  val q7DF = question7DF(spark, userWallComments, userWallLikes, followers, friends); writeParquetToComputer(q7DF,strpath + "Questions\\Q7DF");     val q7DFTimeE = System.nanoTime();  val q7DFExeTime = (q7DFTimeE-q7DFTimeS) / 1e9d
+    printTimetable(7,q7SQLExeTime,q7DFExeTime,123456789)
+*/
     /*
-     users
-    .filter(
-      _.id in persons
-                .filter(p => p.name === "John" && p.surname === "Smith")
-                .map(_.userId)
-    )
-    .map(_.email)
-    .result
+        //Question 9
+        val q9SQLTimeS = System.nanoTime();  val q9SQL = question9SQL(spark, strpath); writeParquetToComputer(q9SQL,strpath + "Questions\\Q9SQL"); val q9SQLTimeE = System.nanoTime(); val q9SQLExeTime = (q9SQLTimeE-q9SQLTimeS) / 1e9d
+        val q9DFTimeS = System.nanoTime();  val q9DF = question9DF(spark, strpath); writeParquetToComputer(q9DF,strpath + "Questions\\Q9DF"); val q9DFTimeE = System.nanoTime(); val q9DFExeTime = (q9DFTimeE-q9DFTimeS) / 1e9d
+        printTimetable(9,q9SQLExeTime,q9DFExeTime,123456789)
+    */
+  }
 
-    select email
-    from Users
-    where id in (select userId
-             from Persons
-             where name = 'John'
-             and surname = 'Smith')
-     */
+
+  def printTimetable(questionNb:Integer, SQLExeTime:Double, DFExeTime:Double ,APIExeTime:Double): Unit = {
+    val strbestTime = bestTime(SQLExeTime,DFExeTime,APIExeTime);
+    var APIExeTimeStr = APIExeTime + "";
+    if(APIExeTime == 123456789){
+      APIExeTimeStr = "";
+    }
+    println("|task\t| spark native api time \t| spark dataframe api \t| spark sql api \t| best \t|")
+    println("|"+ questionNb + "\t| " + APIExeTimeStr + "|\t" + DFExeTime + "\t| " + SQLExeTime + "\t|" + strbestTime + "\t|" );
+  }
+
+  def writeParquetToComputer(dataFrame: sql.DataFrame, name: String): Unit ={
+    dataFrame.write.mode(SaveMode.Overwrite).parquet(name);
   }
 
   def bestTime(sql: Double, df: Double, api: Double): String = {
@@ -231,7 +247,31 @@ object DataFrameApp {
       " GROUP BY LikesOnWallByFriend.UserID")
   }
 
+  def question9SQL(spark: SparkSession, strpath: String): sql.DataFrame = {
+    val q1 = strpath + "Questions/Q1SQL.parquet" //UserID
+    val q2 = strpath + "Questions/Q2SQL.parquet" //UserID
+    val q3 = strpath + "Questions/Q3SQL.parquet" //PostID
+    val q4 = strpath + "Questions/Q4SQL.parquet" //PostID
+    val q5 = strpath + "Questions/Q5SQL.parquet" //UserID
+    // val q6 = strpath + "Questions/Q6DF.parquet" //UserID
 
+    val q1parquet = spark.read.parquet(q1).createOrReplaceTempView("Q1")
+
+    val q2parquet = spark.read.parquet(q2).createOrReplaceTempView("Q2")
+
+    val q3parquet = spark.read.parquet(q3).createOrReplaceTempView("Q3")
+
+    val q4parquet = spark.read.parquet(q4).createOrReplaceTempView("Q4")
+
+    val q5parquet = spark.read.parquet(q5).createOrReplaceTempView("Q5")
+
+    // val q6parquet = spark.read.parquet(q6).as("Q6")
+
+    spark.sql("SELECT Q1.UserID, Likes, Post, Comment, Follower, Friend, Group, Photo, Gif, NotClosedGroup, ClosedGroup" +
+      " FROM Q1 JOIN Q2 ON Q1.UserID = Q2.UserID JOIN " +
+      " Q5 ON Q5.UserID = Q1.UserID")
+
+  }
 
 
 
@@ -363,7 +403,7 @@ object DataFrameApp {
   }
 
   /*
-  limited by 100 to avoid outOfMemoryException
+  limited by 1000 to avoid outOfMemoryException
 
    */
   def question7DF(spark: SparkSession, userWallComments: String, userWallLikes: String, followers: String, friends: String): sql.DataFrame = {
@@ -375,52 +415,84 @@ object DataFrameApp {
 
     val parquetCommentOnWallByFollowerO = spark.read.parquet(userWallComments).as("userWallComments")
     val parquetCommentOnWallByFollower = parquetCommentOnWallByFollowerO.join(parquetFollowers, parquetCommentOnWallByFollowerO("from_id") === parquetFollowers("profile"))
-      .select($"from_id",$"from_id",$"post_owner_id".as("UserIDFoC"))
-      .groupBy($"UserIDFoC",$"from_id").agg(count($"from_id").as("NbCommentByFollowers")).limit(1000)
+      .select($"from_id", $"from_id", $"post_owner_id".as("UserIDFoC"))
+      .groupBy($"UserIDFoC", $"from_id").agg(count($"from_id").as("NbCommentByFollowers")).limit(1000)
 
     val parquetLikeOnWallByFollowerO = spark.read.parquet(userWallLikes).as("userWallLikes")
     val parquetLikeOnWallByFollower = parquetLikeOnWallByFollowerO.join(parquetFollowers, parquetLikeOnWallByFollowerO("likerId") === parquetFollowers("profile"))
-      .select($"likerId",$"likerId",$"ownerId".as("UserIDFoL"))
-      .groupBy($"UserIDFoL",$"likerId").agg(count($"likerId").as("NbLikesByFollowers")).limit(1000)
+      .select($"likerId", $"likerId", $"ownerId".as("UserIDFoL"))
+      .groupBy($"UserIDFoL", $"likerId").agg(count($"likerId").as("NbLikesByFollowers")).limit(1000)
 
     val parquetCommentOnWallByFriendO = spark.read.parquet(userWallComments).as("userWallComments")
     val parquetCommentOnWallByFriend = parquetCommentOnWallByFriendO.join(parquetFriends, parquetCommentOnWallByFriendO("from_id") === parquetFriends("profile"))
-      .select($"from_id",$"from_id",$"post_owner_id".as("UserIDFrC"))
-      .groupBy($"UserIDFrC",$"from_id").agg(count($"from_id").as("NbCommentByFriends")).limit(1000)
+      .select($"from_id", $"from_id", $"post_owner_id".as("UserIDFrC"))
+      .groupBy($"UserIDFrC", $"from_id").agg(count($"from_id").as("NbCommentByFriends")).limit(1000)
 
     val parquetLikeOnWallByFriendO = spark.read.parquet(userWallLikes).as("userWallLikes")
     val parquetLikeOnWallByFriend = parquetLikeOnWallByFriendO.join(parquetFriends, parquetLikeOnWallByFriendO("likerId") === parquetFriends("profile"))
-      .select($"likerId",$"likerId",$"ownerId".as("UserIDFrL"))
-      .groupBy($"UserIDFrL",$"likerId").agg(count($"likerId").as("NbLikesByFriends")).limit(1000)
+      .select($"likerId", $"likerId", $"ownerId".as("UserIDFrL"))
+      .groupBy($"UserIDFrL", $"likerId").agg(count($"likerId").as("NbLikesByFriends")).limit(1000)
 
-    val parquetAllfollowers = parquetCommentOnWallByFollower.join(parquetLikeOnWallByFollower,parquetCommentOnWallByFollower("UserIDFoC") === parquetLikeOnWallByFollower("UserIDFoL"))
-    val parquetAllfriends = parquetCommentOnWallByFriend.join(parquetLikeOnWallByFriend,parquetCommentOnWallByFriend("UserIDFrC") === parquetLikeOnWallByFriend("UserIDFrL"))
-    val allTables = parquetAllfollowers.join(parquetAllfriends,parquetAllfollowers("UserIDFoC") ===  parquetAllfriends("UserIDFrC"))
+    val parquetAllfollowers = parquetCommentOnWallByFollower.join(parquetLikeOnWallByFollower, parquetCommentOnWallByFollower("UserIDFoC") === parquetLikeOnWallByFollower("UserIDFoL"))
+    val parquetAllfriends = parquetCommentOnWallByFriend.join(parquetLikeOnWallByFriend, parquetCommentOnWallByFriend("UserIDFrC") === parquetLikeOnWallByFriend("UserIDFrL"))
+    val allTables = parquetAllfollowers.join(parquetAllfriends, parquetAllfollowers("UserIDFoC") === parquetAllfriends("UserIDFrC"))
 
     allTables.select($"UserIDFrC".as("UserID"),
-      $"NbCommentByFollowers",$"NbCommentByFollowers",$"NbCommentByFollowers",
-      $"NbLikesByFollowers",$"NbLikesByFollowers",$"NbLikesByFollowers",
-      $"NbCommentByFriends",$"NbCommentByFriends",$"NbCommentByFriends",
-      $"NbLikesByFriends",$"NbLikesByFriends",$"NbLikesByFriends")
+      $"NbCommentByFollowers", $"NbCommentByFollowers", $"NbCommentByFollowers",
+      $"NbLikesByFollowers", $"NbLikesByFollowers", $"NbLikesByFollowers",
+      $"NbCommentByFriends", $"NbCommentByFriends", $"NbCommentByFriends",
+      $"NbLikesByFriends", $"NbLikesByFriends", $"NbLikesByFriends")
       .groupBy($"UserID").agg(
       avg($"NbCommentByFollowers").as("AVGCommentByFollower"), count($"NbCommentByFollowers").as("nbOfDiffFollowersCommenting"), max($"NbCommentByFollowers").as("maxNbOfCommentByFollower"),
-      avg($"NbLikesByFollowers").as("AVGLikeByFollower"),      count($"NbLikesByFollowers").as("nbOfDiffFollowersLiking"),       max($"NbLikesByFollowers").as("maxNbOfLikeByFollower"),
-      avg($"NbCommentByFriends").as("AVGCommentByFriend"),     count($"NbCommentByFriends").as("nbOfDiffFriendCommenting"),      max($"NbCommentByFriends").as("maxNbOfCommentByFriend"),
-      avg($"NbLikesByFriends").as("AVGLikeByFriend"),          count($"NbLikesByFriends").as("nbOfDiffFriendLiking"),            max($"NbLikesByFriends").as("maxNbOfLikeByFriend")
+      avg($"NbLikesByFollowers").as("AVGLikeByFollower"), count($"NbLikesByFollowers").as("nbOfDiffFollowersLiking"), max($"NbLikesByFollowers").as("maxNbOfLikeByFollower"),
+      avg($"NbCommentByFriends").as("AVGCommentByFriend"), count($"NbCommentByFriends").as("nbOfDiffFriendCommenting"), max($"NbCommentByFriends").as("maxNbOfCommentByFriend"),
+      avg($"NbLikesByFriends").as("AVGLikeByFriend"), count($"NbLikesByFriends").as("nbOfDiffFriendLiking"), max($"NbLikesByFriends").as("maxNbOfLikeByFriend")
     )
-
-
-
   }
-  def question9DF(q1: sql.DataFrame,q2: sql.DataFrame,q3: sql.DataFrame,q4: sql.DataFrame,q5: sql.DataFrame,q6: sql.DataFrame,q7: sql.DataFrame): sql.DataFrame = {
 
-    q1.join(q2,q1("UserID") === q2("UserID"))
-      //.join(q3,q1("UserID")===q3("UserID"))
-      //.join(q4,q1("UserID")===q4("UserID"))
-      .join(q5,q1("UserID")===q5("UserID"))
-      .join(q6,q1("UserID")===q6("UserID"))
-      .join(q7,q1("UserID")===q7("UserID"))
-      .select("*")
 
+  def question9DF(spark: SparkSession, strpath: String): sql.DataFrame = {
+      import spark.implicits._ // allow to use $
+      val q1 = strpath + "Questions/Q1DF.parquet" //UserID
+      val q2 = strpath + "Questions/Q2DF.parquet" //UserID
+      val q3 = strpath + "Questions/Q3DF.parquet" //PostID
+      val q4 = strpath + "Questions/Q4DF.parquet" //PostID
+      val q5 = strpath + "Questions/Q5DF.parquet" //UserID
+      // val q6 = strpath + "Questions/Q6DF.parquet" //UserID
+
+      val q1parquet = spark.read.parquet(q1).as("Q1")
+
+      val q2parquet = spark.read.parquet(q2).as("Q2")
+
+      val q3parquet = spark.read.parquet(q3).as("Q3")
+
+      val q4parquet = spark.read.parquet(q4).as("Q4")
+
+      val q5parquet = spark.read.parquet(q5).as("Q5")
+
+      // val q6parquet = spark.read.parquet(q6).as("Q6")
+
+      val q1q2 = q1parquet.join(q2parquet, q1parquet("UserID") === q2parquet("UserID")).select(q1parquet("UserID"), $"Likes", $"Posts", $"Comment", $"Follower", $"Friend", $"Group", $"Photo", $"Gif")
+      q1q2.join(q5parquet, q1q2("UserID") === q5parquet("UserID")).select(q1q2("UserID"), $"Likes", $"Posts", $"Comment", $"Follower", $"Friend", $"Group", $"Photo", $"Gif", $"NotClosedGroup", $"ClosedGroup")
   }
+
+  def question1API(spark: SparkSession,userWallComments:String, userWallLikes:String, userWallPosts:String): RDD[(Long, (Int, (Int, Int)))] = {
+    val apiuserWallLikes = spark.read.parquet(userWallLikes).rdd;
+    val apiuserWallLikesSelect = apiuserWallLikes.map(row => (row.getLong(row.fieldIndex("likerId")), row))
+      .groupBy(likerId => likerId._1)
+      .map { case (likerId, group) => (likerId, group.size) }
+
+    val apiuserWallPosts = spark.read.parquet(userWallPosts).rdd;
+    val apiuserWallPostsSelect = apiuserWallPosts.map(row => (row.getLong(row.fieldIndex("owner_id")), row))
+      .groupBy(owner_id => owner_id._1)
+      .map { case (owner_id, group) => (owner_id, group.size) }
+
+    val apiuserWallComments = spark.read.parquet(userWallComments).rdd;
+    val apiuserWallCommentsSelect = apiuserWallComments.map(row => (row.getLong(row.fieldIndex("post_owner_id")), row))
+      .groupBy(post_owner_id => post_owner_id._1)
+      .map { case (post_owner_id, group) => (post_owner_id, group.size) }
+
+    apiuserWallLikesSelect.join(apiuserWallPostsSelect.join(apiuserWallCommentsSelect))
+  }
+
 }
